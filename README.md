@@ -1,0 +1,2 @@
+# VK bot storage
+ 
