@@ -1,0 +1,16 @@
+app:
+  name: 'telegram-bot'
+  version: '1.0.0'
+
+bot:
+  token: ''
+
+database:
+  host: 'postgres'
+  port: 5432
+  database: 'passwords_storage'
+  user: 'admin'
+  password: 'postgres'
+
+logger:
+  log_level: 'debug'
