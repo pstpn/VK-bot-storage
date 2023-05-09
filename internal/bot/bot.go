@@ -1,9 +1,10 @@
 package bot
 
 import (
+	"strings"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/telegram-bot/internal/storage"
-	"strings"
 )
 
 type Handler struct {

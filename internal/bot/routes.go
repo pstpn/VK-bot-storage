@@ -7,10 +7,9 @@ import (
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/telegram-bot/config"
 	"github.com/telegram-bot/internal/models"
 )
-
-const deletePasswordDeadline = 20 * time.Second
 
 func (h *Handler) startRoute() string {
 	return StartMsg
@@ -83,7 +82,7 @@ func (h *Handler) delRoute(msg *tgbotapi.Message) string {
 
 func (h *Handler) deleteMessageAfterDeadline(msg *tgbotapi.Message) {
 
-	time.Sleep(deletePasswordDeadline)
+	time.Sleep(config.DeletePasswordDeadline)
 	h.bot.DeleteMessage(tgbotapi.DeleteMessageConfig{
 		ChatID:    msg.Chat.ID,
 		MessageID: msg.MessageID,

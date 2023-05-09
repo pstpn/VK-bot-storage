@@ -1,8 +1,15 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"time"
 
-const configPath = "config/config.yaml"
+	"github.com/spf13/viper"
+)
+
+const (
+	configPath             = "config/config.yaml"
+	DeletePasswordDeadline = 20 * time.Second
+)
 
 type Config struct {
 	Bot      BotConfig      `yaml:"bot"`
