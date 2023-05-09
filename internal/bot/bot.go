@@ -1,68 +1,63 @@
 package bot
 
 import (
-	"context"
-	"log"
-	"time"
-
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/telegram-bot/internal/storage"
+	"strings"
 )
 
-func RunBot(token string, r *storage.Repo) error {
-
-	b, err := tgbotapi.NewBotAPI(token)
-	if err != nil {
-		return err
-	}
-	b.Debug = true
-	b.Buffer = 0
-	log.Printf("The bot with name \"%s\" has been successfully launched\n", b.Self.UserName)
-
-	err = handleBot(b, r)
-	if err != nil {
-		return err
-	}
-
-	return nil
+type Handler struct {
+	bot  *tgbotapi.BotAPI
+	repo *storage.Repo
 }
 
-func handleBot(b *tgbotapi.BotAPI, r *storage.Repo) error {
+func NewHandler(token string, r *storage.Repo) (*Handler, error) {
 
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 30
+	bot, err := tgbotapi.NewBotAPI(token)
+	if err != nil {
+		return nil, err
+	}
+	bot.Buffer = 0
 
-	updates, _ := b.GetUpdatesChan(u)
+	return &Handler{
+		bot:  bot,
+		repo: r,
+	}, nil
+}
+
+func (h *Handler) Handle() error {
+
+	updates, _ := h.bot.GetUpdatesChan(tgbotapi.UpdateConfig{
+		Offset:  0,
+		Timeout: 30,
+	})
+
 	for update := range updates {
 		if update.Message == nil {
 			continue
 		}
+		var answer string
+		currentMsg := update.Message
 
-		switch update.Message.Text {
-		case "/vadno":
-			go func() {
-				ok, _ := b.GetUpdatesChan(tgbotapi.UpdateConfig{
-					Offset:  0,
-					Limit:   0,
-					Timeout: 20,
-				})
-				b.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Enter service"))
-				r.GetService(context.Background(), (<-ok).Message.Text)
-				//go deleteMessageAfterDeadline(b, update.Message)
-			}()
-		default:
-			b.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Incorrect action! Try again!"))
+		switch currentMsg.Command() {
+		case "start":
+			answer = h.startRoute()
+		case "set":
+			answer = h.setRoute(currentMsg)
+		case "get":
+			answer = h.getRoute(currentMsg)
+		case "del":
+			answer = h.delRoute(currentMsg)
+		}
+		replyMsg, err := h.bot.Send(tgbotapi.NewMessage(currentMsg.Chat.ID, answer))
+		if err != nil {
+			return err
 		}
 
+		if strings.HasPrefix(answer, GetSuccessMsg) {
+			go h.deleteMessageAfterDeadline(&replyMsg)
+		}
 	}
 
 	return nil
-}
-
-func deleteMessageAfterDeadline(bot *tgbotapi.BotAPI, msg *tgbotapi.Message) {
-	time.Sleep(10 * time.Second)
-	bot.DeleteMessage(tgbotapi.DeleteMessageConfig{
-		ChatID:    msg.Chat.ID,
-		MessageID: msg.MessageID,
-	})
 }

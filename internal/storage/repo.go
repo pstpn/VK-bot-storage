@@ -1,23 +1,11 @@
 package storage
 
-import (
-	"context"
-
-	"github.com/telegram-bot/internal/models"
-)
-
 type Repo struct {
-	ud UsersDataRepo
-	sv ServicesRepo
+	U UsersDataRepo
 }
 
-func NewRepo(ud UsersDataRepo, sv ServicesRepo) *Repo {
+func NewRepo(ud UsersDataRepo) *Repo {
 	return &Repo{
-		ud: ud,
-		sv: sv,
+		U: ud,
 	}
-}
-
-func (r *Repo) GetService(ctx context.Context, serviceName string) (*models.Service, error) {
-	return r.sv.Get(ctx, &models.GetServiceInput{ServiceName: serviceName})
 }

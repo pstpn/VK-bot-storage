@@ -7,11 +7,7 @@ import (
 )
 
 type UsersDataRepo interface {
-	Set(ctx context.Context, input *models.SetUsersDataInput) error
-	Get(ctx context.Context, input *models.GetUsersDataInput) ([]*models.UsersData, error)
-	Del(ctx context.Context, input *models.DelUsersDataInput) error
-}
-
-type ServicesRepo interface {
-	Get(ctx context.Context, input *models.GetServiceInput) (*models.Service, error)
+	Set(ctx context.Context, input *models.SetUserDataInput) error
+	Get(ctx context.Context, input *models.GetUserDataInput) (*models.UserData, error)
+	Del(ctx context.Context, input *models.DelUserDataInput) error
 }

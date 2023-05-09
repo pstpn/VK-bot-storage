@@ -28,11 +28,14 @@ func Run(cfg *config.Config) {
 
 	repo := storage.NewRepo(
 		postgres.NewUsersDataRepo(db),
-		postgres.NewServicesRepo(db),
 	)
 
-	err = bot.RunBot(cfg.Bot.Token, repo)
+	handler, err := bot.NewHandler(cfg.Bot.Token, repo)
 	if err != nil {
-		log.Fatal(fmt.Errorf("app - Run - bot.RunBot: %w", err))
+		log.Fatal(fmt.Errorf("app - Run - bot.NewHandler: %w", err))
+	}
+	err = handler.Handle()
+	if err != nil {
+		log.Fatal(fmt.Errorf("app - Run - handler.Handle: %w", err))
 	}
 }

@@ -1,43 +1,31 @@
 package models
 
-import "time"
-
 type (
 	Login    string
 	Password string
+	ChatID   int64
 )
 
-type Service struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+type UserData struct {
+	ChatID      ChatID   `json:"chat_id"`
+	ServiceName string   `json:"service_name"`
+	Login       Login    `json:"login"`
+	Password    Password `json:"password"`
 }
 
-type UsersData struct {
-	ID        int       `json:"user_id"`
-	ServiceID int       `json:"service_id"`
-	Login     Login     `json:"login"`
-	Password  Password  `json:"password"`
-	Time      time.Time `json:"time"`
+type SetUserDataInput struct {
+	ServiceName string   `json:"service_name"`
+	ChatID      ChatID   `json:"chat_id"`
+	Login       Login    `json:"login"`
+	Password    Password `json:"password"`
 }
 
-type SetUsersDataInput struct {
-	ServiceID int      `json:"service_id"`
-	UserID    int      `json:"user_id"`
-	Login     Login    `json:"login"`
-	Password  Password `json:"password"`
-}
-
-type GetUsersDataInput struct {
-	ServiceID int `json:"service_id"`
-	UserID    int `json:"user_id"`
-}
-
-type GetServiceInput struct {
+type GetUserDataInput struct {
 	ServiceName string `json:"service_name"`
+	ChatID      ChatID `json:"chat_id"`
 }
 
-type DelUsersDataInput struct {
-	ServiceID int    `json:"service_name"`
-	UserID    int    `json:"user_id"`
-	Login     string `json:"login"`
+type DelUserDataInput struct {
+	ServiceName string `json:"service_name"`
+	ChatID      ChatID `json:"chat_id"`
 }

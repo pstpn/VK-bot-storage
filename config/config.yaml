@@ -11,6 +11,3 @@ database:
   database: 'passwords_storage'
   user: 'admin'
   password: 'postgres'
-
-logger:
-  log_level: 'debug'

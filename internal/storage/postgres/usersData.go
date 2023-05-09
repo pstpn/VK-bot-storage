@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/telegram-bot/internal/models"
@@ -17,13 +16,13 @@ func NewUsersDataRepo(db *pgx.Conn) storage.UsersDataRepo {
 	return &usersDataRepo{db: db}
 }
 
-func (r *usersDataRepo) Set(ctx context.Context, input *models.SetUsersDataInput) error {
+func (r *usersDataRepo) Set(ctx context.Context, input *models.SetUserDataInput) error {
 
 	sql := `
-INSERT INTO users_data (service_id, user_id, login, password, time) 
-VALUES ($1, $2, $3, $4, $5);`
+INSERT INTO users_data (chat_id, service_name, login, password) 
+VALUES ($1, $2, $3, $4);`
 
-	_, err := r.db.Exec(ctx, sql, input.ServiceID, input.UserID, input.Login, input.Password, time.Now())
+	_, err := r.db.Exec(ctx, sql, input.ChatID, input.ServiceName, input.Login, input.Password)
 	if err != nil {
 		return err
 	}
@@ -31,37 +30,29 @@ VALUES ($1, $2, $3, $4, $5);`
 	return nil
 }
 
-func (r *usersDataRepo) Get(ctx context.Context, input *models.GetUsersDataInput) ([]*models.UsersData, error) {
+func (r *usersDataRepo) Get(ctx context.Context, input *models.GetUserDataInput) (*models.UserData, error) {
 
 	sql := `
-SELECT * FROM users_data
-WHERE service_id = $1 AND user_id = $2;`
+SELECT chat_id, service_name, login, password FROM users_data
+WHERE chat_id = $1 AND service_name = $2;`
 
-	rows, err := r.db.Query(ctx, sql, input.ServiceID, input.UserID)
+	userData := &models.UserData{}
+	err := r.db.QueryRow(ctx, sql, input.ChatID, input.ServiceName).
+		Scan(&userData.ChatID, &userData.ServiceName, &userData.Login, &userData.Password)
 	if err != nil {
 		return nil, err
 	}
 
-	usersData := make([]*models.UsersData, 1)
-	for rows.Next() {
-		userData := &models.UsersData{}
-		err = rows.Scan(&userData.ServiceID, &userData.ID, &userData.Login, &userData.Password, &userData.Time)
-		if err != nil {
-			return nil, err
-		}
-		usersData = append(usersData, userData)
-	}
-
-	return usersData, nil
+	return userData, nil
 }
 
-func (r *usersDataRepo) Del(ctx context.Context, input *models.DelUsersDataInput) error {
+func (r *usersDataRepo) Del(ctx context.Context, input *models.DelUserDataInput) error {
 
 	sql := `
 DELETE FROM users_data
-WHERE service_id = $1 AND user_id = $2 AND login = $3;`
+WHERE chat_id = $1 AND service_name = $2;`
 
-	_, err := r.db.Exec(ctx, sql, input.ServiceID, input.UserID, input.Login)
+	_, err := r.db.Exec(ctx, sql, input.ChatID, input.ServiceName)
 	if err != nil {
 		return err
 	}
