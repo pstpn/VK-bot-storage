@@ -4,15 +4,17 @@
 
 ### <span>🧰 ***Telegram bot has commands for interaction:***</span>
 
-1) `Set-command` for setting the login and password for the service
-2) `Get-command` for getting login and password by service name
-3) `Del-command` for deleting login and password by service name
+1) `Start-command` to display a welcome message and information about the bot
+2) `Set-command` for setting the login and password for the service
+3) `Get-command` for getting login and password by service name
+4) `Del-command` for deleting login and password by service name
 
 Templates for commands:
 ```
-1. /set <service name> <login> <password>
-2. /get <service name>
-3. /del <service name>
+1. /start
+2. /set <service name> <login> <password>
+3. /get <service name>
+4. /del <service name>
 ```
 
 ### <span>💾 ***Data storage:***</span>
