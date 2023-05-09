@@ -19,7 +19,7 @@ func (h *Handler) setRoute(msg *tgbotapi.Message) string {
 
 	fields := strings.Split(msg.CommandArguments(), " ")
 	if len(fields) != 3 {
-		return ParamsCountErrorMsg + "\n" + SetExample
+		return ParamsCountErrorMsg + "\n" + SetCommand
 	}
 
 	hash := base64.StdEncoding.EncodeToString([]byte(fields[2]))
@@ -41,7 +41,7 @@ func (h *Handler) getRoute(msg *tgbotapi.Message) string {
 
 	fields := strings.Split(msg.CommandArguments(), " ")
 	if len(fields) != 1 {
-		return ParamsCountErrorMsg + "\n" + GetExample
+		return ParamsCountErrorMsg + "\n" + GetCommand
 	}
 
 	userData, err := h.repo.U.Get(context.Background(), &models.GetUserDataInput{
@@ -66,7 +66,7 @@ func (h *Handler) delRoute(msg *tgbotapi.Message) string {
 
 	fields := strings.Split(msg.CommandArguments(), " ")
 	if len(fields) != 1 {
-		return ParamsCountErrorMsg + "\n" + DelExample
+		return ParamsCountErrorMsg + "\n" + DelCommand
 	}
 
 	err := h.repo.U.Del(context.Background(), &models.DelUserDataInput{

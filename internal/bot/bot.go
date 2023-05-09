@@ -49,6 +49,8 @@ func (h *Handler) Handle() error {
 			answer = h.getRoute(currentMsg)
 		case "del":
 			answer = h.delRoute(currentMsg)
+		default:
+			answer = UnknownCommandErrorMsg
 		}
 		replyMsg, err := h.bot.Send(tgbotapi.NewMessage(currentMsg.Chat.ID, answer))
 		if err != nil {
